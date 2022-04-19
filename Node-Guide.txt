@@ -1,0 +1,32 @@
+REPL - (Read-Eval-Print-Loop)
+Node. js Read-Eval-Print-Loop (REPL) is an easy-to-use command-line tool, used for processing Node. js expressions. 
+It captures the user's JavaScript code inputs, interprets, and evaluates the result of this code. It displays the 
+result to the screen, and repeats the process till the user quits the shell.
+
+app.use()
+method to create middleware 
+
+
+/**
+*  app.use() method to create middleware
+*  if any funtion pass to it, then every incoming request will go throught that functions
+*  next() is func that allow a request to travel next middleware, that can be below it
+*  app.use have 8+ overload function inside express, check documentation for detail 
+ * specific path should be at the top, if not then generic like '/' can match any req, bcz this '/' match all request
+*/
+/**
+    app.use('/',(req, res, next) => {
+        console.log('this always runs');
+        next()
+    });
+    app.use('/add-product', (req, res, next) => {
+        console.log('in the middleware');
+        res.send('/add-product');
+    });
+
+    app.use('/',(req, res, next) => {
+        console.log('in the second below middleware, came here after nextg is called');
+        // send can take any arguments and its type converted to it, like in this case in browser contentTYpe: text/html 
+        res.send('<h1>hello from express</h1>'); 
+    });
+ */
