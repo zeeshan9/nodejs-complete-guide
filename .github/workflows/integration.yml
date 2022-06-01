@@ -1,0 +1,42 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+# this action is for m mergin feature branch to main by pull request
+name: Integration 
+
+# on specify when we want to run this job, on specify action and on each action we run (jobs:) like on 
+# push and also on pull_request
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # this is a build job, will run on build action
+  build:
+    # this action or job has to run on server, this server will be hosted by github, we need to
+    # specify exactly what server is, like we have specify ubuntu-latest
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
+    # steps we need to take to run this job correctly
+    steps:
+    # our first step in this case is checkout to feature/brach from main
+    # we are using the github.com/actions/checkout repository for switch branch
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      # next we setup the node in ubunti server we are using actions/setup-node is
+      # a repo, for node setup already on github like checkout
+      uses: actions/setup-node@v3
+      # next setting up multiple version of node, have provided in stretegy above
+      # and for every node vs these steps will execute separatly in them e,g.[12.x, 14.x, 16.x]
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
