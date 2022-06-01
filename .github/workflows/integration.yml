@@ -14,11 +14,11 @@ on:
 
 # 2 jobs : 1) build is successful  - 2) all test passed
 
+# this is a build job, will run on build action
 jobs:
-  # this is a build job, will run on build action
+  # this action or job has to run on server, this server will be hosted by github, we need to
+  # specify exactly what server is, like we have specify ubuntu-latest
   build:
-    # this action or job has to run on server, this server will be hosted by github, we need to
-    # specify exactly what server is, like we have specify ubuntu-latest
     runs-on: ubuntu-latest
 
     strategy:
