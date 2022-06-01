@@ -42,10 +42,10 @@ jobs:
         cache: 'npm'
     # below are steps for our own app
     - run: npm ci
-    - run: npm start --if-present
+    - run: npm run build --if-present
     - run: npm test
 
-    build:
+    unit-tests:
       # this action or job has to run on server, this server will be hosted by github, we need to
       # specify exactly what server is, like we have specify ubuntu-latest
       runs-on: ubuntu-latest
