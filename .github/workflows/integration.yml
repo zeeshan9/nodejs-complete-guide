@@ -12,6 +12,8 @@ on:
   pull_request:
     branches: [ main ]
 
+# 2 jobs : 1) build is successful  - 2) all test passed
+
 jobs:
   # this is a build job, will run on build action
   build:
@@ -36,7 +38,37 @@ jobs:
       # and for every node vs these steps will execute separatly in them e,g.[12.x, 14.x, 16.x]
       with:
         node-version: ${{ matrix.node-version }}
+        # basic way of managing our pakage
         cache: 'npm'
+    # below are steps for our own app
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+
+    build:
+      # this action or job has to run on server, this server will be hosted by github, we need to
+      # specify exactly what server is, like we have specify ubuntu-latest
+      runs-on: ubuntu-latest
+
+      strategy:
+        matrix:
+          node-version: [12.x, 14.x, 16.x]
+
+      # steps we need to take to run this job correctly
+      steps:
+      # our first step in this case is checkout to feature/brach from main
+      # we are using the github.com/actions/checkout repository for switch branch
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        # next we setup the node in ubunti server we are using actions/setup-node is
+        # a repo, for node setup already on github like checkout
+        uses: actions/setup-node@v3
+        # next setting up multiple version of node, have provided in stretegy above
+        # and for every node vs these steps will execute separatly in them e,g.[12.x, 14.x, 16.x]
+        with:
+          node-version: ${{ matrix.node-version }}
+          # basic way of managing our pakage
+          cache: 'npm'
+      # below are steps for our own app
+      - run: npm ci
+      - run: npm run test #to run res
