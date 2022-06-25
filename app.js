@@ -2,14 +2,33 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const path = require('path');
+const errorController = require('./controllers/error');
+const expressHbs = require('express-handlebars');
 
-app.engine('pug', require('pug').__express)
+/** ejs template have mixes functionality like from pug can do js exp logics in html 
+ * 'view engine' is a reserved configuration key which understood by expressjs
+*/
+app.set('view engine', 'ejs'); // =>  now node will use this default view engine,
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('views', 'views'); // don't need this line exactly, until views folder name change or different
+/**  =====   app.set() ====== use for global configurations */
+/** ---------handlebars  expressHbs('extension name for html file', 'template type')---------- */
+// app.engine(
+//     'hbs',
+//     expressHbs({
+//       layoutsDir: 'views/layouts/',
+//       defaultLayout: 'main-layout',
+//       extname: 'hbs'
+//     })
+//   );
+// app.set('view engine', 'hbs'); // =>  now node will use this default view engine,
+
+/** ------- pug ------------------ */
+// app.engine('pug', require('pug').__express)
+// app.set('view engine', 'pug'); // => using this line we don't need to add .extension in file like .pug etc bcz this will make the mentioned fil our default view engine pug here in this case
+app.set('views', path.join(__dirname, 'views'));  // don't need this line exactly, until views folder name change or different
 
 const bodyParser = require('body-parser');
-const adminData = require('./routes/admin'); 
+const adminRoutes = require('./routes/admin'); 
 const shopRoutes = require('./routes/shop');
 
 /**
@@ -21,7 +40,8 @@ app.use(bodyParser.urlencoded({extension: false}))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/admin', adminData.routes);
+// app.use('/admin', adminDataRoutes.routes);
+app.use('/admin', adminRoutes);
 app.use('/shop', shopRoutes);
 
 // ----------------- Middleware explain
@@ -72,9 +92,6 @@ app.use('/shop', shopRoutes);
  */
 
 // -----------------404 route not found error handling
-app.use((req, res, next) => {
-    res.status(404).render('404.pug', { pageTitle: 'Page Not Found' });
-    // res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-})
+app.use(errorController.get404)
 
 app.listen(3100); 
