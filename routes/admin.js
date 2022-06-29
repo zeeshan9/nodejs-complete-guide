@@ -5,21 +5,33 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const productsController = require('../controllers/products')
+// const productsController = require('../controllers/products')
 // const rootDir = require('../util/path');
+const adminController = require('../controllers/admin');
 
 let products = [];
  
 // admin/add-product => Get
-router.get('/add-product', productsController.getAddProduct);
+router.get('/add-product', adminController.getAddProduct);
+// router.get('/add-product', productsController.getAddProduct);
 
-// admin/add-product => Get
-router.post('/add-product', productsController.postAddProduct);
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
+
+router.get('/products', adminController.getProducts);
+// router.post('/add-product', productsController.postAddProduct);
 
 router.post('/product', (req, res) => {
     console.log('body req = ', req.body) // gives undefined, if we don't use body-parser package at the top
     res.redirect('/admin/abc'); //redirect to another request route in node
 });
+
+
+router.post('/delete-product', adminController.postDeleteProduct);
+
+router.get('/edit-product/:productId', adminController.getEditProduct);
+
+router.post('/edit-product', adminController.postEditProduct);
 
 router.get('/test-abc', (req, res) => {
     res.send('<h1>Product Added</h1>')

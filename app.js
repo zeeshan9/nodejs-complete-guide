@@ -42,8 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // app.use('/admin', adminDataRoutes.routes);
 app.use('/admin', adminRoutes);
-app.use('/shop', shopRoutes);
-
+// app.use('/shop', shopRoutes);
+app.use(shopRoutes);
 // ----------------- Middleware explain
 /**
 *  app.use() method to create middleware, we can use app.get(), app.post(), app.delete(), app. patch etc
