@@ -13,6 +13,13 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
+  Product.findById(prodId => {
+    res.render('shop/product-detail', {
+      product: product[0],
+      pageTitle: product.title,
+      path: '/products'
+    });
+  });
   Product.findById(prodId, product => {
     res.render('shop/product-detail', {
       product: product,
@@ -23,13 +30,23 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render('shop/index', {
-      prods: products,
-      pageTitle: 'Shop',
-      path: '/'
-    });
-  });
+  Product.fetchAll().then(([rows]) => {
+    console.log(rows[0])
+      res.render('shop/index', {
+        prods: new Array(rows[0]),
+        pageTitle: 'Shop',
+        path: '/'
+      });
+  }).catch((err) => {
+    console.log('error getIndex in fetchAll ', err)
+  })
+  // Product.fetchAll(products => {
+  //   res.render('shop/index', {
+  //     prods: products,
+  //     pageTitle: 'Shop',
+  //     path: '/'
+  //   });
+  // });
 };
 
 exports.getCart = (req, res, next) => {

@@ -4,6 +4,8 @@ const app = express();
 const path = require('path');
 const errorController = require('./controllers/error');
 const expressHbs = require('express-handlebars');
+// const db = require('./util/database'); // using mysql2 way using pooling in database file
+const sequelize = require('./util/database');
 
 /** ejs template have mixes functionality like from pug can do js exp logics in html 
  * 'view engine' is a reserved configuration key which understood by expressjs
@@ -31,6 +33,7 @@ const bodyParser = require('body-parser');
 const adminRoutes = require('./routes/admin'); 
 const shopRoutes = require('./routes/shop');
 
+
 /**
  * GLobal configuration Value, read it thorigh app.get()
  * app.set() have default path to views folder, if we name it diffrently for view, then use app.set('views', 'folder name')
@@ -44,6 +47,13 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/admin', adminRoutes);
 // app.use('/shop', shopRoutes);
 app.use(shopRoutes);
+
+/* mysql2 way but set used it behind the scene */
+// db.execute("Select * from products").then((res) => {
+//     console.log('app.js line 51');
+// }).catch(err => {
+//     console.log('error: ', err)
+// });
 // ----------------- Middleware explain
 /**
 *  app.use() method to create middleware, we can use app.get(), app.post(), app.delete(), app. patch etc
@@ -94,4 +104,11 @@ app.use(shopRoutes);
 // -----------------404 route not found error handling
 app.use(errorController.get404)
 
-app.listen(3100); 
+sequelize.sync().then(res => {
+    console.log('server started at 3100')
+    app.listen(3100);
+})
+.catch(err => {
+    console.log("error: ", err)
+})
+app.listen(3000); 
