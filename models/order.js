@@ -3,16 +3,16 @@ const Sequelize = require("sequelize")
  const sequelize = require('../util/database');
 
  /* Difining table name and column */
- const Cart = sequelize.define('cart', {
+ const Order = sequelize.define('order', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       alowNull: false,
       primaryKey: true
     }
- });
+   });
 
- module.exports = Cart;
+ module.exports = Order;
 
 
 /* using file systel */

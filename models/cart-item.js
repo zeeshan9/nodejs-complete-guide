@@ -3,16 +3,17 @@ const Sequelize = require("sequelize")
  const sequelize = require('../util/database');
 
  /* Difining table name and column */
- const Cart = sequelize.define('cart', {
+ const CartItem = sequelize.define('cartItem', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       alowNull: false,
       primaryKey: true
-    }
+    },
+    quantity: Sequelize.INTEGER,
  });
 
- module.exports = Cart;
+ module.exports = CartItem;
 
 
 /* using file systel */

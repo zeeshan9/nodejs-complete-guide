@@ -6,7 +6,12 @@ const errorController = require('./controllers/error');
 const expressHbs = require('express-handlebars');
 // const db = require('./util/database'); // using mysql2 way using pooling in database file
 const sequelize = require('./util/database');
-
+const Product = require('./models/product');
+const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-Item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-Item');
 /** ejs template have mixes functionality like from pug can do js exp logics in html 
  * 'view engine' is a reserved configuration key which understood by expressjs
 */
@@ -42,6 +47,15 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({extension: false}))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'public')))
+
+app.use((req, res, next) => {
+    User.findByPk(1)
+    .then((user) => {
+        req.user = user;
+        next();
+    })
+    .catch((error) => {console.log(error)})
+})
 
 // app.use('/admin', adminDataRoutes.routes);
 app.use('/admin', adminRoutes);
@@ -104,11 +118,40 @@ app.use(shopRoutes);
 // -----------------404 route not found error handling
 app.use(errorController.get404)
 
-sequelize.sync().then(res => {
-    console.log('server started at 3100')
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Product);
+
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+Cart.belongsToMany(Product, { through: CartItem});
+Product.belongsToMany(Cart, { through: CartItem});
+
+Order.belongsTo(User); //1 user
+User.hasMany(Order)
+Order.belongsToMany(Product, { through: OrderItem});
+
+sequelize
+// .sync({force: true}) //if we want to rewrite the db every time, and remove all old data
+.sync()
+.then(() => {
+    return User.findByPk(1)
+})
+.then((user) => {
+    if(!user) {
+        return User.create({name: 'John', email: 'John@example.com'})
+    }
+    return user;
+})
+.then((user) => {
+    return user.createCart();
+})
+.then(res => {
+    console.log('%c server started at 3100',"color:yellow;")
     app.listen(3100);
 })
 .catch(err => {
-    console.log("error: ", err)
-})
+    console.log("error: ", err, "color: yellow")
+});
+
 app.listen(3000); 
